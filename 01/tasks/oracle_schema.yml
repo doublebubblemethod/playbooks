@@ -1,0 +1,15 @@
+- name: Copy Oracle schema script to target
+  ansible.builtin.copy:
+    src: scripts/oracle_schema.py
+    dest: "{{ venv_dir.path }}/oracle_schema.py"
+    mode: '0755'
+
+- name: Drop all tables in mock_user schema
+  ansible.builtin.command:
+    cmd: "{{ venv_path }}/bin/python {{ venv_dir.path }}/oracle_schema_drop.py"
+  environment:
+    ORACLE_HOST: oracle-db
+    ORACLE_PORT: "1521"
+    ORACLE_SERVICE: MOCKDB
+    ORACLE_USER: mock_user
+    ORACLE_PASSWORD: mock_password

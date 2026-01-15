@@ -1,0 +1,42 @@
+---
+-
+  hosts: control
+  become: false
+  vars:
+    venv_python: python3
+
+  tasks:
+
+    - name: Create temporary directory for venv
+      ansible.builtin.tempfile:
+        state: directory
+        suffix: ansible-venv
+      register: venv_dir
+
+    - name: Save venv path as fact
+      ansible.builtin.set_fact:
+        venv_path: "{{ venv_dir.path }}/venv"
+
+    - name: Create virtualenv
+      ansible.builtin.command:
+        cmd: "{{ venv_python }} -m venv {{ venv_path }}"
+        creates: "{{ venv_path }}/bin/activate"
+    
+    - name: Upgrade pip in venv
+      ansible.builtin.command:
+        cmd: "{{ venv_path }}/bin/pip install --upgrade pip"
+      changed_when: false
+    
+    - name: Upgrade pip in venv
+      ansible.builtin.command:
+        cmd: "{{ venv_path }}/bin/pip install oracledb"
+      changed_when: false
+    
+    - import_tasks: tasks/oracle_schema.yml
+    
+  handlers:
+    - name: Summary
+      debug:
+        var: validation_results
+ 
+...
