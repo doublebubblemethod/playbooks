@@ -1,0 +1,15 @@
+---
+- name: Install system dependency for Python venv (root)
+  hosts: linux
+  gather_facts: true
+  become: true
+
+  tasks:
+    - name: Install python venv support on Debian/Ubuntu
+      ansible.builtin.apt:
+        name: "python{{ ansible_facts.python.version.major }}.{{ ansible_facts.python.version.minor }}-venv"
+        state: present
+        update_cache: true
+      when: ansible_facts.os_family == "Debian"
+
+...

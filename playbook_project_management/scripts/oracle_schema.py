@@ -10,9 +10,9 @@ conn = oracledb.connect(
 )
 
 cursor = conn.cursor()
+print("Connection established.")
 
-# Example: add a column if it doesn't exist
-# 🔒 Force schema context (Oracle-safe)
+print(f"Setting current schema to {os.environ['ORACLE_USER']}")
 cursor.execute(
     "ALTER SESSION SET CURRENT_SCHEMA = " + os.environ["ORACLE_USER"]
 )
@@ -21,8 +21,8 @@ cursor.execute("""
     SELECT 'DROP TABLE "' || table_name || '" CASCADE CONSTRAINTS' AS drop_stmt FROM user_tables
 """)
 
-
 drop_statements = [row[0] for row in cursor.fetchall()]
+print(f"Statements are {drop_statements}")
 
 # 2️⃣ Execute DROP statements
 for stmt in drop_statements:
@@ -36,3 +36,4 @@ conn.commit()
 
 cursor.close()
 conn.close()
+print("Cursor and connection closed. Script finished successfully.")

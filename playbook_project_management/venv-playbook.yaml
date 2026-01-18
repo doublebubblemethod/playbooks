@@ -5,6 +5,7 @@
   vars:
     venv_python: python3
 
+# Python version for python3 is Python 3.9.19
   tasks:
 
     - name: Create temporary directory for venv
@@ -22,21 +23,22 @@
         cmd: "{{ venv_python }} -m venv {{ venv_path }}"
         creates: "{{ venv_path }}/bin/activate"
     
+    - name: Check Python version for venv
+      ansible.builtin.command: "{{ venv_python }} --version"
+      register: python_version_result
+      changed_when: false
+
     - name: Upgrade pip in venv
       ansible.builtin.command:
         cmd: "{{ venv_path }}/bin/pip install --upgrade pip"
       changed_when: false
     
-    - name: Upgrade pip in venv
+    - name: Install oracledb in venv
       ansible.builtin.command:
         cmd: "{{ venv_path }}/bin/pip install oracledb"
       changed_when: false
     
     - import_tasks: tasks/oracle_schema.yml
     
-  handlers:
-    - name: Summary
-      debug:
-        var: validation_results
  
 ...

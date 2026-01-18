@@ -1,4 +1,8 @@
 [control]
 thereversedome ansible_connection=local
 
-[ubuntu]
+[centos]
+centos1
+
+[linux:children]
+centos

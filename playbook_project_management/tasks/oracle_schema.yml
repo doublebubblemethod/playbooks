@@ -5,11 +5,17 @@
     mode: '0755'
 
 - name: Drop all tables in mock_user schema
-  ansible.builtin.command:
-    cmd: "{{ venv_path }}/bin/python {{ venv_dir.path }}/oracle_schema_drop.py"
+  ansible.builtin.shell: "{{ venv_path }}/bin/python -u {{ venv_dir.path }}/oracle_schema_drop.py"
   environment:
     ORACLE_HOST: oracle-db
     ORACLE_PORT: "1521"
     ORACLE_SERVICE: MOCKDB
     ORACLE_USER: mock_user
     ORACLE_PASSWORD: mock_password
+  register: drop_schema_result
+
+- name: Show Oracle schema drop log
+  ansible.builtin.debug:
+    msg:
+      stdout: "{{ drop_schema_result.stdout_lines }}"
+      stderr: "{{ drop_schema_result.stderr_lines }}"
